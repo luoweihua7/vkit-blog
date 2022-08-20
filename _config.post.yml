@@ -1,4 +1,8 @@
 widgets:
+  # - type: profile
+  #   position: left
+  - type: toc
+    position: left
   - type: recent_posts
     position: left
   - type: categories

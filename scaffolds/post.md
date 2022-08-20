@@ -1,6 +1,18 @@
 ---
 title: {{ title }}
 date: {{ date }}
-toc: true
+cover:
+thumbnail:
 tags:
+  - Tag
+categories:
+  - Category
+toc: true
 ---
+
+导读
+
+<!-- more -->
+
+文章详情
+
