@@ -101,11 +101,12 @@ www.example.com statusCode://200 resBody://({"code":"1"})
 
 ### 隐藏请求记录
 
-有些时候，想要在Network中隐藏请求记录。
+有些时候，想要在Network中隐藏请求记录。<br>
+下方的规则中，如果是正则，可能还需要转义，具体以实际效果为准。
 
 ```
 # 隐藏指定请求路径的请求记录
-/path/to/api.php/ enable://hide
+/path/to/ enable://hide
 
 # 隐藏指定页面的请求记录
 /path/to/index.html/ enable://hide
@@ -119,7 +120,7 @@ www.example.com statusCode://200 resBody://({"code":"1"})
 可以根据路径代理请求。
 
 ```
-/web/static/([^.]*)\.(.*).js/  xfile///Users/yourname/web/static/$1.js
+/web/static/([^.]*)\.(.*).js/  xfile:///Users/yourname/web/static/$1.js
 ```
 
 上面的规则，效果如下：
@@ -127,14 +128,18 @@ www.example.com statusCode://200 resBody://({"code":"1"})
 > 尝试使用本地资源 `/Users/yourname/web/static/index.js` 替换 `/web/static/index.abc1323a.js` 请求
 > 
 > 如果本地资源不存在，则继续使用原网络上的资源
+> 
+> 具体是使用 `file://` 还是 `xfile://` 可根据实际需求按需配置。更多的可参考whistle的文档
 
 
 ## 修改请求内容
 
+这里特别强调一下（Whistle文档中的 [操作值](http://wproxy.org/whistle/data.html) 部分亦有说明），如果需要操作的字符串（比如UA头，Cookie的值，请求的参数内容等）包含 **空格**，则需要把 **操作值** 放到 **Values** 或者 **本地文件** 中
+
 ### 修改请求资源配置
 
 ```
-# 在请求地址中添加请求参数
+# 在请求地址中添加请求参数，以下配置会在往真实服务器请求的search参数中添加对应的参数
 /cgi-bin/api.json/  reqMerge://(a=1&b=2&rnd=13ac)
 /cgi-bin/api.json/  reqMerge://{"a":1,"b":2,"rnd":"13ac"}
 # 也可以在Values中以配置文件的形式添加更多的请求参数
@@ -149,7 +154,7 @@ www.example.com statusCode://200 resBody://({"code":"1"})
 ### 添加跨域头
 
 部分请求会因为没有跨域头，导致请求失败。可以在 Whistle 中添加跨域头配置，解决调试问题。
-一般建议配置成 `resCors://enable` 即可。
+一般配置成 `resCors://*` 或者 `resCors://enable` 即可。
 
 
 ```
@@ -160,7 +165,87 @@ www.example.com resCors://*
 www.example.com resCors://enable
 ```
 
+### 接口Mock
+
+```
+# 本地替换来自指定页面发起的api请求，session.json为Values中的内容。按住 Ctrl或者⌘ 后点击 session.json 内容，可以快速跳转过去编辑
+example.com/api/user/session statusCode://200 resCors://* resBody://{session.json} includeFilter://reqH:origin=https://admin.example.com
+```
+
+上面的规则配置说明
+
+> `statusCode://` 拦截请求，直接返回200，不再发往远程服务器
+> `resCors://` 允许跨域，一般用于接口，可按需配置
+> `resBody://` 使用Values中的配置（session.json）作为body返回
+> `includeFilter://` 仅拦截来自指定域名的接口请求
 
 
+接口Mock还有一些是属于代理接口，即通过同一个接口url，通过参数进行转发到实际的业务后台地址，只要有不同的地方，则可以通过规则进行过率处理。
+
+```
+/api/proxy/api.json/ includeFilter://b:CheckNetwork resBody://({"retcode":0,"data":{}}) resCors://*
+/api/proxy/api.json/ includeFilter://b:GetApiA resBody://{api_a.json} resCors://*
+/api/proxy/api.json/ includeFilter://b:GetApiB resBody://{api_b.json} resCors://*
+/api/proxy/api.json/ includeFilter://b:GetApiC resBody://{api_c.json} resCors://*
+```
+
+上面的规则中，通过统一的URL接口请求地址 `/api/proxy/api.json/`，在body中通过参数进行区分的反向代理。
+配置说明
+
+> `includeFilter://b:` 过滤出请求指定URL时，Body中包含指定字符串的请求（更多参数参考官方的帮助文档）
+> `resBody://` 替换响应内容（注意这里没有使用 statusCode://，则还是会往真实服务器发送请求，这里只是把相应的内容替换了）
+> `resCors://` 添加跨域头
 
 
+## 调试
+
+### 日志查看
+
+可以通过添加 `log://` 将页面上的控制台输出，回报到 whistle 中进行展示。也可以指定对应的日志分类如 `log://type` ，可以快速的在 `Tools` > `Console` 下通过选择类型，过滤不同页面回报回来的日志信息
+
+```
+example.com log://xxxx
+```
+
+### weinre远程调试
+通过添加 `weinre://` 可以通过 weinre 进行远程调试，适合用于 iOS 的一些App页面（Android的页面建议都是打开开发者调试后，通过Chrome的 [chrome://insepect](chrome://insepect) 进行调试）。
+
+```
+example.com weinre://
+```
+
+在移动端打开页面后，可以通过点击Whistle中Network面板顶部的 `Weinre` 菜单入口，进入移动端远程调试
+
+## 其他一些比较通用的配置
+
+```
+# 使用代理
+* proxy://ip:port
+* socks://ip:port
+* socks://username:password@ip:port
+
+# 禁用缓存
+* cache://no
+
+# 允许CORS
+* resCors://enable
+
+# 跨域OPTIONS请求优化
+# /.*.example.com/ resHeaders://{"access-control-max-age":7200}
+
+
+# 颜色可以在这里选：https://tool.chinaz.com/tools/web
+# HTML
+* style://color=@3A3A3A&bgColor=@0099CC includeFilter://h:accept=html
+# JSON
+* style://color=@3A3A3A&bgColor=@98F898 includeFilter://h:accept=/json/ includeFilter://resH:content-type=/json/
+# Image 弱化
+* style://color=@A3A3A3 includeFilter://h:accept=/image/ excludeFilter://h:accept=html
+
+# 404 高亮
+* style://color=@fff&bgColor=@CC0033 includeFilter://s:404
+* style://color=@fff&bgColor=@CC3366 includeFilter://s:503
+
+# 隐藏OPTIONS请求
+* enable://hide includeFilter://m:OPTIONS
+```
