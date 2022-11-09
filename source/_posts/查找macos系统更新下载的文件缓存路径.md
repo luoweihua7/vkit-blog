@@ -23,7 +23,7 @@ thumbnail:
 ps -e | grep Update.app | grep softwareupdated
 ```
 
-[!step1](/assets/images/macOS/software-update-step1.png)
+![find process softwareupdated pid](/assets/images/macOS/software-update-step1.png)
 
 
 # 查找进程所打开的文件信息列表
@@ -38,7 +38,7 @@ sudo lsof -p <id> | grep private
 
 例如在系统更新时，可以通过查找统一的系统安装包文件名 `InstallAssistant.pkg`， 进一步快速确认对应的路径地址
 
-[!step2](/assets/images/macOS/software-update-step2.png)
+![find software download cache](/assets/images/macOS/software-update-step2.png)
 
 
 至于系统安装的下载地址，后续有诉求了再更新这里
