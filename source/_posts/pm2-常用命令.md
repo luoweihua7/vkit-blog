@@ -8,6 +8,7 @@ categories:
   - PM2
 toc: true
 date: 2022-08-20 03:48:24
+updated: 2022-08-20 03:48:24
 cover: /assets/images/pm2.png
 thumbnail:
 ---

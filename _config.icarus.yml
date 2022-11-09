@@ -30,7 +30,7 @@ article:
         clipboard: true
         fold: unfolded
     readtime: false
-    update_time: false
+    update_time: true
     licenses:
         Creative Commons:
             icon: fab fa-creative-commons

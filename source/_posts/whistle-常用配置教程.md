@@ -1,6 +1,7 @@
 ---
 title: Whistle 常用配置教程
 date: 2022-08-20 00:06:30
+updated: 2022-11-09 16:30:00
 cover: /assets/images/whistle.png
 tags:
   - Whistle
