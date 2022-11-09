@@ -20,7 +20,9 @@ thumbnail:
 
 之前在iKuai下进行的DDNS自动更新的服务，也需要修改到RouterOS中。
 
-经过一通骚操作，解决了DNSPod的更新，发现ROS的命令，对新手来说，还是有些上手难度。
+经过一通骚操作，解决了DNSPod的更新，发现ROS的命令，对新手来说，还是有些上手难度。直接更新DDNS，自己使用的 DNSPod/Aliyun/Cloudflare/NoIP 这4个服务中，只有 NoIP 有更新的聚合接口，方便在ROS中直接调用更新。其他的服务商都是单独的接口需要做整合处理。
+
+考虑到外部的一些提供的脚本中的接口API，担心会有泄漏的风险，所以还是部署一个自己的接口地址来更新会更稳妥一些。
 
 因今年开始腾讯云免费大量收紧，正在将腾讯云的 Serverless 函数迁移到 Cloudflare Worker，便把DDNS写了一个Worker。
 
@@ -147,3 +149,8 @@ https://<wrangler.toml中的name>.<你的子域>.workers.dev/ali?id=<id>&key=<ke
 ```
 https://<wrangler.toml中的name>.<你的子域>.workers.dev/cf?id=<id>&key=<key>&domain=<domain>&record=<record>&ip=<ip>
 ```
+
+如果你Cloudflare有自己的域名，则可以在Workers对应的服务中，在触发器的Tab中添加自定义域
+
+![custom worker domain](/assets/images/ddns-domain.png)
+
