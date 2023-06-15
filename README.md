@@ -32,7 +32,7 @@ npx hexo publish [layout] "Draft Title"
 
 通过布局创建后的Markdown文档，一般为如下内容
 
-```
+```template
 ---
 title: {{ title }}
 date: {{ date }}
@@ -65,24 +65,20 @@ toc: true
 |categories|文章分类，会在分类列表页面中展示。<br>添加多个后，会形成层级树状结构|
 |toc|是否在文章详情左侧展示文章目录结构，建议设置为 `true`|
 
-
 # 构建
 
-```
+```sh
 npm install
 npx hexo generate
 ```
 
 更多请访问 [Hexo指令](https://hexo.io/zh-cn/docs/commands) 文档
 
-
 # Github Actions
 
 通过使用 Github Actions 的自动化能力，通过 `Tencent Cloud COS Action` 实现自动化的部署到腾讯云存储桶。可以在腾讯云存储桶中开启静态网站功能实现静态网站的部署。
 
-
 首先在 `Settings` > `Secrets` > `Actions` 页面中，点击 **New repository secret** 按钮，分别添加以下配置
-
 
 |Name|Value|
 |:---|:---|
@@ -90,7 +86,3 @@ npx hexo generate
 |TENCENT_CLOUD_SECRET_KEY|`填写腾讯云的 secretKey`|
 |TENCENT_CLOUD_COS_BUCKET|`填写腾讯云的 COS 存储桶名称`|
 |TENCENT_CLOUD_COS_REGION|`填写腾讯云的 COS 存储桶的地域`|
-
-
-
-
