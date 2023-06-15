@@ -6,7 +6,7 @@ thumbnail:
 ---
 
 &nbsp;
-一个不会样式的前端仔，欢迎关注我的 [个人博客](https://vkit.fun/)。
+一个不会样式的前端仔，欢迎关注我的 [个人博客](https://blog.bofoi.com/)。
 <br>
 <br>
 <br>
