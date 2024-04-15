@@ -89,7 +89,7 @@ plugins:
         tracking_id: G-XF11D6Z7R2
     katex: false
     mathjax: false
-    outdated_browser: false
+    outdated_browser: true
     progressbar: true
 providers:
     cdn: jsdelivr
